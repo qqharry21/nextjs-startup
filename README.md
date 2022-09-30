@@ -1,34 +1,222 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Project startup
 
-## Getting Started
+`npx create-next-app@latest --ts ./`
 
-First, run the development server:
+## Install Eslint
 
-```bash
-npm run dev
-# or
-yarn dev
+`npm install eslint --save-dev`
+
+Initialize the config file
+
+`npx eslint --init`
+
+If you are using YARN, then run this command
+
+`yarn add -D eslint-plugin-react@latest @typescript-eslint/eslint-plugin@latest @typescript-eslint/parser@latest`
+
+Install TypeScript plugins related to ESLint
+
+`npm install -D eslint-plugin-import @typescript-eslint/parser eslint-import-resolver-typescript`
+
+## Install Prettier
+
+`npm install -D prettier eslint-config-prettier eslint-plugin-prettier eslint-plugin-react-hooks`
+
+Create the prettierrc file
+`touch .prettierrc`
+
+If you are going to use jest in this project, then add this line to eslintrc file
+
+```JSON
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+	"jest": true // Add this line!
+    },
+	...
+}
+```
+To use prettier alongside with eslint you need to change the extends object:
+
+```JSON
+{
+	...
+	"extends": [
+	  "eslint:recommended",
+	  "plugin:react/recommended",
+	  "plugin:@typescript-eslint/recommended",
+	  "prettier" // Add this line!
+	],
+	...
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Basic rules**
+```JSON
+{
+	...
+	"rules": {
+        "react/react-in-jsx-scope": "off",
+        "camelcase": "error",
+        "spaced-comment": "error",
+        "quotes": ["error", "single"],
+        "no-duplicate-imports": "error"
+  },
+	...
+}
+```
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+Update the eslintrc file
+```JSON
+"plugins": ["react", "react-hooks", "@typescript-eslint", "prettier"],
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+The last thing to set up in ESLint is the eslint-import-resolver-typescript. Just add the settings key in the eslint configuration file.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```JSON
+{
+	...
+	"settings": {
+    "import/resolver": {
+      "typescript": {}
+    }
+  }
+}
+```
 
-## Learn More
+Update prettierrc file
+```JSON
+{
+  "semi": false,
+  "tabWidth": 2,
+  "printWidth": 100,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "jsxSingleQuote": true,
+  "bracketSpacing": true
+}
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Install Commitizen
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`npm i commitizen -D`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+`npx commitizen init cz-conventional-changelog`
 
-## Deploy on Vercel
+Add this line to your package.json file
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```JSON
+{
+  ...,
+   "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  }
+}
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+And  `prepare-commit-msg` file after install Husky
+```
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+exec < /dev/tty && node_modules/.bin/cz --hook || true
+```
+
+## Install Husky
+
+`npx husky-init && npm install`
+
+Update `pre-commit` file
+
+```
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo '🛠️🛠️🛠️  Styling, testing and building your project before committing  🛠️🛠️🛠️'
+
+# Check tsconfig
+npm run check-types ||
+(
+  echo '🚨🚨🚨  TypeScript check failed  🚨🚨🚨'
+  false
+)
+
+# Check Prettier standards
+npm run format && npm run check-format ||
+(
+  echo '🚨🚨🚨  Prettier check failed  🚨🚨🚨'
+  false
+)
+
+# Check ESLint standards
+npm run check-lint ||
+(
+  echo '🚨🚨🚨  ESLint check failed  🚨🚨🚨'
+  false
+)
+
+echo '✅✅✅  All checks passed  ✅✅✅'
+
+npm run build ||
+(
+  echo '❌🚨❌  Build failed  ❌🚨❌'
+  false
+)
+
+echo '✅✅✅  Build Succeed  ✅✅✅'
+```
+
+## Setup editor config
+
+Create .editorconfig
+```
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+```
+
+Create vscode config for this project
+
+```JSON
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.tslint": true
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
+```
+
+Update package.json
+```JSON
+{
+  "prepare": "husky install",
+  "check-types": "tsc --pretty --noEmit",
+  "check-format": "prettier -w . && prettier -c .",
+  "check-lint": "eslint src/**/*.{js,jsx,ts,tsx,json}",
+  "fix-lint": "eslint --fix 'src/**/*.{js,jsx,ts,tsx,json}'",
+  "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
+  "test-all": "npm run format && npm run check-lint && npm run check-types && npm run build"
+}
+```
+
