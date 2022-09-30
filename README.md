@@ -37,6 +37,7 @@ If you are going to use jest in this project, then add this line to eslintrc fil
 	...
 }
 ```
+
 To use prettier alongside with eslint you need to change the extends object:
 
 ```JSON
@@ -53,6 +54,7 @@ To use prettier alongside with eslint you need to change the extends object:
 ```
 
 **Basic rules**
+
 ```JSON
 {
 	...
@@ -68,6 +70,7 @@ To use prettier alongside with eslint you need to change the extends object:
 ```
 
 Update the eslintrc file
+
 ```JSON
 "plugins": ["react", "react-hooks", "@typescript-eslint", "prettier"],
 ```
@@ -86,6 +89,7 @@ The last thing to set up in ESLint is the eslint-import-resolver-typescript. Jus
 ```
 
 Update prettierrc file
+
 ```JSON
 {
   "semi": false,
@@ -117,7 +121,8 @@ Add this line to your package.json file
 }
 ```
 
-And  `prepare-commit-msg` file after install Husky
+And `prepare-commit-msg` file after install Husky
+
 ```
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
@@ -172,6 +177,7 @@ echo '✅✅✅  Build Succeed  ✅✅✅'
 ## Setup editor config
 
 Create .editorconfig
+
 ```
 root = true
 
@@ -208,6 +214,7 @@ Create vscode config for this project
 ```
 
 Update package.json
+
 ```JSON
 {
   "prepare": "husky install",
@@ -219,4 +226,3 @@ Update package.json
   "test-all": "npm run format && npm run check-lint && npm run check-types && npm run build"
 }
 ```
-
